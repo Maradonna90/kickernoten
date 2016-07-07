@@ -22,11 +22,6 @@ class kickerSpider(scrapy.Spider):
             yield scrapy.Request(url, callback=self.getNameAndRating)
 
     def getNameAndRating(self, response):
-        #filename = response.url.split("/")[-2] + '.html'
-        #with open(filename, 'wb') as f:
-        #    f.write(response.body)
-        # einwechslungenHeim
-        # einwechslungenAusw
 
         #starting lineup
         for sel in response.xpath('//div[@class="spielinfoSpielfeldPlayer"]'):
@@ -42,42 +37,16 @@ class kickerSpider(scrapy.Spider):
 
                 item['spieler_note'] = float(''.join(spieler_note[0]).replace(",", "."))
             yield item
-
-        #sub players away
-        #for sel in response.xpath('//div[contains(@id, "einwechslungenAusw")]'):
-            # a = sel.xpath('div/a/text()').extract()
-            #spieler_name = sel.xpath('div/a/text()').extract()
-            #spieler_note = sel.xpath('div/text()').extract()
-            #print(spieler_name, spieler_note)
-            #if spieler_note:
-                #for i in range(0, len(spieler_note)+1, 2):
-                    #print(i)
-                    #item = RmkickerItem()
-                    #name = spieler_name[i]
-                    #name = ''.join(name).replace('\xa0', ' ')
-                    #note = spieler_note[int(i/2)]
-                    #note = ''.join(note)
-                    #note = re.findall('(\d,\d)|(\d)', note)
-                    #note = float(''.join(list(filter(None, note))[0]).replace(",", "."))
-                    #item['spieler_name'] = name
-                    #item['spieler_note'] = note
-                    #yield item
         
-        #sub player home
-        #for sel in response.xpath('//div[contains(@id, "einwechslungenHeim")]'):
-            #a = sel.xpath('div/a/text()').extract()
-            #spieler_name = sel.xpath('div/a/text()').extract()
-            #spieler_note = sel.xpath('div/text()').extract()
-            #if spieler_note:
-                #for i in range(0, len(spieler_note)+1, 2):
-                    #item = RmkickerItem()
-                    #name = spieler_name[i]
-                    #name = ''.join(name).replace('\xa0', ' ')
-                    #note = spieler_note[int(i/2)]
-                    #note = ''.join(note)
-                    #note = re.findall('(\d,\d)|(\d)', note)
-                    #note = float(''.join(list(filter(None, note))[0]).replace(",", "."))
-                    #item['spieler_name'] = name
-                    #item['spieler_note'] = note
-                    #yield item
+        #sub players
+        for sel in response.xpath('//div[@class="headDataRowLiDiv2" and contains(text(), "für")]/text()'):
+            string = sel.extract().split('(')
+            if len(string) > 1:
+                spieler_name = ''.join(re.findall('[a-zA-Zäüö]' , string[0]))
+                spieler_note = ''.join(re.findall('(\d,\d)|(\d)', string[1])[0])
+                spieler_note = float(spieler_note.replace(",", "."))
+                #print(spieler_name, spieler_note)
+                item['spieler_name'] = spieler_name
+                item['spieler_note'] = spieler_note
+                yield item
 
