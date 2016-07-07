@@ -6,5 +6,6 @@ season is the year the season is ending in, e.g 2015-2016 -> 16
 
 day is the round of the league, e.g first round of the season -> 1
 
-# Known Issues
-Subbed in Players are not recognized
+# Supports
+Sportal.de - Bundesliga
+Kicker.de - Bundesliga
